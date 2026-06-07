@@ -1,10 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<!-- I know this can be separated into a separate CSS and js file -->
+
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seller Portal - Blitz</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
     <style>
         * {
             margin: 0;
@@ -234,6 +241,32 @@
             font-size: 1.1em;
         }
 
+        #responseTime {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #eee;
+            padding: 6px 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+            margin-top: 8px;
+            color: #333;
+        }
+
+        #refreshBtn {
+            background: white;
+            border: 1px solid #f0d6dc;
+            color: #f5576c;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        #refreshBtn:hover {
+            transform: translateY(-2px);
+        }
+
         .error {
             background: #ffe0e0;
             color: #c41e3a;
@@ -397,6 +430,13 @@
             <div class="section">
                 <h2>📦 Manage Products</h2>
                 <div id="productsLoading" class="loading" style="display: none;">Loading products...</div>
+                <div style="margin-top:8px; display:flex; align-items:center; gap:8px;">
+                    <button id="refreshBtn">Refresh</button>
+                    <input id="searchById" type="number" placeholder="Search by ID"
+                        style="padding:8px;border:1px solid #eee;border-radius:6px;width:120px;">
+                    <button id="searchIdBtn" class="btn-secondary" style="width:auto;padding:8px 10px">Search</button>
+                    <div id="responseTime" style="display:none;"></div>
+                </div>
                 <div id="productsList" class="products-list"></div>
                 <div id="noProducts" class="no-products" style="display: none;">No products yet. Add your first product!
                 </div>
@@ -458,10 +498,15 @@
         async function loadProducts() {
             try {
                 document.getElementById('productsLoading').style.display = 'block';
+                const start = performance.now();
                 const response = await fetch(`${API_BASE_URL}/items`);
+                const duration = Math.round(performance.now() - start);
                 if (!response.ok) throw new Error('Failed to fetch products');
 
                 allProducts = await response.json();
+                const respEl = document.getElementById('responseTime');
+                respEl.textContent = `Response time: ${duration} ms`;
+                respEl.style.display = 'block';
                 displayProducts();
                 document.getElementById('productsLoading').style.display = 'none';
             } catch (error) {
@@ -632,7 +677,46 @@
         }
 
         // Load products on page load
+        document.getElementById('refreshBtn').addEventListener('click', () => loadProducts());
+
+        // Load products on page load
         loadProducts();
+
+        // Search by ID
+        document.getElementById('searchIdBtn').addEventListener('click', async () => {
+            const idEl = document.getElementById('searchById');
+            const id = parseInt(idEl.value);
+            if (!id && id !== 0) {
+                showError('Please enter a valid numeric ID');
+                return;
+            }
+
+            try {
+                document.getElementById('productsLoading').style.display = 'block';
+                const start = performance.now();
+                const response = await fetch(`${API_BASE_URL}/items/${id}`);
+                const duration = Math.round(performance.now() - start);
+                const respEl = document.getElementById('responseTime');
+                respEl.textContent = `Response time: ${duration} ms`;
+                respEl.style.display = 'block';
+
+                if (response.status === 404) {
+                    document.getElementById('productsLoading').style.display = 'none';
+                    showError('Item not found');
+                    return;
+                }
+
+                if (!response.ok) throw new Error('Failed to fetch item');
+
+                const item = await response.json();
+                allProducts = [item];
+                displayProducts();
+                document.getElementById('productsLoading').style.display = 'none';
+            } catch (err) {
+                document.getElementById('productsLoading').style.display = 'none';
+                showError(err.message);
+            }
+        });
     </script>
 </body>
 

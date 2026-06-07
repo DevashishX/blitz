@@ -16,6 +16,14 @@ services:
     networks:
       - blitz-network
 
+  redis:
+    image: redis:7.0-alpine
+    container_name: redis-cache
+    ports:
+      - 6379:6379
+    networks:
+      - blitz-network
+
   backend:
     build:
       context: ./backend
@@ -27,8 +35,11 @@ services:
       DB_USER: user
       DB_PASSWORD: user_password
       DB_NAME: sales
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     depends_on:
       - db
+      - redis
     networks:
       - blitz-network
 
@@ -42,7 +53,6 @@ services:
       - ./portals/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
       - backend
-      - db
     networks:
       - blitz-network
 

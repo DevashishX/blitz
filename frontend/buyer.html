@@ -1,10 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
+
+<!-- I know this can be separated into a separate CSS and js file -->
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buyer Portal - Blitz</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
     <style>
         * {
             margin: 0;
@@ -222,6 +230,30 @@
             color: #667eea;
         }
 
+        #responseTime {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #e6e6e6;
+            padding: 8px 12px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+            margin-left: 8px;
+        }
+
+        #refreshBtn {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 10px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        #refreshBtn:hover {
+            transform: translateY(-2px);
+        }
+
         .error {
             background: #ffe0e0;
             color: #c41e3a;
@@ -360,11 +392,14 @@
             <p>Browse our real-time inventory with live availability updates</p>
             <div class="filters">
                 <input type="text" id="searchBox" class="search-box" placeholder="Search by product name...">
+                <button id="refreshBtn">Refresh</button>
+                <div id="responseTime" style="display:none;"></div>
             </div>
         </div>
 
         <div id="error" class="error" style="display: none;"></div>
         <div id="loading" class="loading" style="display: none;">Loading products...</div>
+
         <div id="productsGrid" class="products-grid"></div>
         <div id="noProducts" class="no-products" style="display: none;">
             <p>No products found</p>
@@ -413,10 +448,15 @@
                 document.getElementById('loading').style.display = 'block';
                 document.getElementById('error').style.display = 'none';
 
+                const start = performance.now();
                 const response = await fetch(`${API_BASE_URL}/items`);
+                const duration = Math.round(performance.now() - start);
                 if (!response.ok) throw new Error('Failed to fetch products');
 
                 allProducts = await response.json();
+                const respEl = document.getElementById('responseTime');
+                respEl.textContent = `${duration} ms`;
+                respEl.style.display = 'block';
                 displayProducts(allProducts);
                 document.getElementById('loading').style.display = 'none';
             } catch (error) {
@@ -516,6 +556,11 @@
             div.textContent = text;
             return div.innerHTML;
         }
+
+        // Wire refresh button
+        document.getElementById('refreshBtn').addEventListener('click', () => {
+            loadProducts();
+        });
 
         // Load products on page load
         loadProducts();

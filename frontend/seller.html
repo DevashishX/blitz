@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Portal - Blitz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .navbar {
+            background: white;
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar h1 {
+            color: #f5576c;
+            font-size: 1.8em;
+            margin: 0;
+        }
+
+        .navbar a {
+            background: #f5576c;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .navbar a:hover {
+            background: #d63d4f;
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-size: 1.6em;
+            margin-bottom: 20px;
+            color: #333;
+            border-bottom: 3px solid #f5576c;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="email"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="email"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #f5576c;
+            box-shadow: 0 0 0 3px rgba(245, 87, 108, 0.1);
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            border: 2px solid #ddd;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-danger {
+            background: #c41e3a;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #a01a2e;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .button-group button {
+            flex: 1;
+        }
+
+        .products-list {
+            margin-top: 20px;
+        }
+
+        .product-item {
+            background: #f9f9f9;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .product-item:hover {
+            border-color: #f5576c;
+            box-shadow: 0 4px 12px rgba(245, 87, 108, 0.2);
+        }
+
+        .product-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+        }
+
+        .product-item-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .product-item-id {
+            background: #f5576c;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85em;
+        }
+
+        .product-item-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+            font-size: 0.95em;
+        }
+
+        .detail-row {
+            color: #666;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .product-item-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .product-item-actions button {
+            padding: 8px 12px;
+            font-size: 0.9em;
+            flex: 1;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: #f5576c;
+            font-size: 1.1em;
+        }
+
+        .error {
+            background: #ffe0e0;
+            color: #c41e3a;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border-left: 4px solid #c41e3a;
+        }
+
+        .success {
+            background: #e0ffe0;
+            color: #2d7a2d;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border-left: 4px solid #2d7a2d;
+        }
+
+        .no-products {
+            text-align: center;
+            padding: 30px;
+            color: #999;
+            font-style: italic;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .close {
+            color: #999;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        .modal h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .modal-error {
+            background: #ffe0e0;
+            color: #c41e3a;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border-left: 4px solid #c41e3a;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 900px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .product-item-details {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar">
+        <h1>⚡ BLITZ - Seller Portal</h1>
+        <a href="/">← Back Home</a>
+    </div>
+
+    <div class="container">
+        <div class="main-layout">
+            <!-- Add/Edit Product Form -->
+            <div class="section">
+                <h2>📝 Add Product</h2>
+                <div id="formError" class="error" style="display: none;"></div>
+                <div id="formSuccess" class="success" style="display: none;"></div>
+
+                <form id="productForm">
+                    <div class="form-group">
+                        <label for="productName">Product Name *</label>
+                        <input type="text" id="productName" required placeholder="e.g., iPhone 15 Pro">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productPrice">Price ($) *</label>
+                        <input type="number" id="productPrice" required step="0.01" min="0" placeholder="e.g., 999.99">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productAvailable">Available Units *</label>
+                        <input type="number" id="productAvailable" required min="0" placeholder="e.g., 50">
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="btn-primary">+ Add Product</button>
+                        <button type="reset" class="btn-secondary">Clear</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Products Management -->
+            <div class="section">
+                <h2>📦 Manage Products</h2>
+                <div id="productsLoading" class="loading" style="display: none;">Loading products...</div>
+                <div id="productsList" class="products-list"></div>
+                <div id="noProducts" class="no-products" style="display: none;">No products yet. Add your first product!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>✏️ Edit Product</h2>
+            <div id="editError" class="modal-error" style="display: none;"></div>
+
+            <form id="editForm">
+                <div class="form-group">
+                    <label for="editProductName">Product Name</label>
+                    <input type="text" id="editProductName" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editProductPrice">Price ($)</label>
+                    <input type="number" id="editProductPrice" required step="0.01" min="0">
+                </div>
+
+                <div class="form-group">
+                    <label for="editProductAvailable">Available Units</label>
+                    <input type="number" id="editProductAvailable" required min="0">
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                    <button type="button" class="btn-secondary" onclick="closeEditModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = '/api';
+        const editModal = document.getElementById('editModal');
+        const closeBtn = document.querySelector('.close');
+        let currentEditId = null;
+        let allProducts = [];
+
+        // Modal controls
+        closeBtn.onclick = closeEditModal;
+        window.onclick = (event) => {
+            if (event.target == editModal) closeEditModal();
+        };
+
+        function closeEditModal() {
+            editModal.style.display = 'none';
+            document.getElementById('editForm').reset();
+            document.getElementById('editError').style.display = 'none';
+        }
+
+        // Load products
+        async function loadProducts() {
+            try {
+                document.getElementById('productsLoading').style.display = 'block';
+                const response = await fetch(`${API_BASE_URL}/items`);
+                if (!response.ok) throw new Error('Failed to fetch products');
+
+                allProducts = await response.json();
+                displayProducts();
+                document.getElementById('productsLoading').style.display = 'none';
+            } catch (error) {
+                document.getElementById('productsLoading').style.display = 'none';
+                showError(`Failed to load products: ${error.message}`);
+            }
+        }
+
+        // Display products
+        function displayProducts() {
+            const list = document.getElementById('productsList');
+            const noProducts = document.getElementById('noProducts');
+
+            if (allProducts.length === 0) {
+                list.innerHTML = '';
+                noProducts.style.display = 'block';
+                return;
+            }
+
+            noProducts.style.display = 'none';
+            list.innerHTML = allProducts.map(product => `
+                <div class="product-item">
+                    <div class="product-item-header">
+                        <div class="product-item-title">${escapeHtml(product.name)}</div>
+                        <div class="product-item-id">ID: ${product.id}</div>
+                    </div>
+                    <div class="product-item-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Price:</span> $${product.price.toFixed(2)}
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Stock:</span> ${product.available} units
+                        </div>
+                        <div class="detail-row" style="grid-column: 1 / -1;">
+                            <span class="detail-label">Last Updated:</span> ${formatDateTime(product.timestamp)}
+                        </div>
+                    </div>
+                    <div class="product-item-actions">
+                        <button class="btn-primary" onclick="editProduct(${product.id})">Edit</button>
+                        <button class="btn-danger" onclick="deleteProduct(${product.id})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Add product
+        document.getElementById('productForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('productName').value;
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const available = parseInt(document.getElementById('productAvailable').value);
+
+            try {
+                document.getElementById('formError').style.display = 'none';
+                document.getElementById('formSuccess').style.display = 'none';
+
+                const response = await fetch(`${API_BASE_URL}/items`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, price, available })
+                });
+
+                if (!response.ok) throw new Error('Failed to create product');
+
+                document.getElementById('formSuccess').textContent = '✓ Product added successfully!';
+                document.getElementById('formSuccess').style.display = 'block';
+                document.getElementById('productForm').reset();
+
+                await loadProducts();
+            } catch (error) {
+                showFormError(error.message);
+            }
+        });
+
+        // Edit product
+        function editProduct(productId) {
+            const product = allProducts.find(p => p.id === productId);
+            if (product) {
+                currentEditId = productId;
+                document.getElementById('editProductName').value = product.name;
+                document.getElementById('editProductPrice').value = product.price;
+                document.getElementById('editProductAvailable').value = product.available;
+                document.getElementById('editError').style.display = 'none';
+                editModal.style.display = 'block';
+            }
+        }
+
+        // Save edits
+        document.getElementById('editForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('editProductName').value;
+            const price = parseFloat(document.getElementById('editProductPrice').value);
+            const available = parseInt(document.getElementById('editProductAvailable').value);
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/items/${currentEditId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, price, available })
+                });
+
+                if (!response.ok) throw new Error('Failed to update product');
+
+                closeEditModal();
+                await loadProducts();
+                showSuccess('Product updated successfully!');
+            } catch (error) {
+                document.getElementById('editError').textContent = '❌ ' + error.message;
+                document.getElementById('editError').style.display = 'block';
+            }
+        });
+
+        // Delete product
+        async function deleteProduct(productId) {
+            if (!confirm('Are you sure you want to delete this product?')) return;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/items/${productId}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) throw new Error('Failed to delete product');
+
+                await loadProducts();
+                showSuccess('Product deleted successfully!');
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        // Helper functions
+        function showFormError(message) {
+            document.getElementById('formError').textContent = '❌ ' + message;
+            document.getElementById('formError').style.display = 'block';
+        }
+
+        function showError(message) {
+            // Create temp error in products section
+            const list = document.getElementById('productsList');
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.textContent = '❌ ' + message;
+            list.parentNode.insertBefore(errorDiv, list);
+            setTimeout(() => errorDiv.remove(), 5000);
+        }
+
+        function showSuccess(message) {
+            // Create temp success message
+            const section = document.querySelector('.section:last-child');
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success';
+            successDiv.textContent = '✓ ' + message;
+            section.insertBefore(successDiv, section.firstChild);
+            setTimeout(() => successDiv.remove(), 3000);
+        }
+
+        function formatDateTime(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleString();
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Load products on page load
+        loadProducts();
+    </script>
+</body>
+
+</html>

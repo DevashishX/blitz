@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buyer Portal - Blitz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .navbar {
+            background: white;
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar h1 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin: 0;
+        }
+
+        .navbar a {
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .navbar a:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h2 {
+            font-size: 2em;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            flex: 1;
+            min-width: 200px;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            color: white;
+        }
+
+        .product-info {
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .product-price {
+            font-size: 1.6em;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .product-stock {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .stock-label {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .stock-count {
+            background: #f0f0f0;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .stock-count.low {
+            background: #ffe0e0;
+            color: #c41e3a;
+        }
+
+        .stock-count.out {
+            background: #f0f0f0;
+            color: #999;
+        }
+
+        .product-timestamp {
+            font-size: 0.85em;
+            color: #999;
+            margin-bottom: auto;
+        }
+
+        .view-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .view-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .view-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 8px;
+            font-size: 1.2em;
+            color: #667eea;
+        }
+
+        .error {
+            background: #ffe0e0;
+            color: #c41e3a;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #c41e3a;
+        }
+
+        .no-products {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 8px;
+            color: #999;
+        }
+
+        .no-products p {
+            font-size: 1.2em;
+            margin-bottom: 0;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .close {
+            color: #999;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        .modal h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .modal-info {
+            margin: 15px 0;
+        }
+
+        .modal-label {
+            font-weight: 600;
+            color: #667eea;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .modal-value {
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        @media (max-width: 768px) {
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 15px;
+            }
+
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .filters {
+                flex-direction: column;
+            }
+
+            .search-box {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar">
+        <h1>⚡ BLITZ - Buyer Portal</h1>
+        <a href="/">← Back Home</a>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h2>🛍️ Shop Products</h2>
+            <p>Browse our real-time inventory with live availability updates</p>
+            <div class="filters">
+                <input type="text" id="searchBox" class="search-box" placeholder="Search by product name...">
+            </div>
+        </div>
+
+        <div id="error" class="error" style="display: none;"></div>
+        <div id="loading" class="loading" style="display: none;">Loading products...</div>
+        <div id="productsGrid" class="products-grid"></div>
+        <div id="noProducts" class="no-products" style="display: none;">
+            <p>No products found</p>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalProductName"></h2>
+            <div class="modal-info">
+                <span class="modal-label">Price:</span>
+                <span class="modal-value" id="modalProductPrice"></span>
+            </div>
+            <div class="modal-info">
+                <span class="modal-label">Available in Stock:</span>
+                <span class="modal-value" id="modalProductAvailable"></span>
+            </div>
+            <div class="modal-info">
+                <span class="modal-label">Last Updated:</span>
+                <span class="modal-value" id="modalProductTimestamp"></span>
+            </div>
+            <div class="modal-info">
+                <span class="modal-label">Product ID:</span>
+                <span class="modal-value" id="modalProductId"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = '/api';
+        const modal = document.getElementById('productModal');
+        const closeBtn = document.querySelector('.close');
+        let allProducts = [];
+
+        // Close modal
+        closeBtn.onclick = () => modal.style.display = 'none';
+        window.onclick = (event) => {
+            if (event.target == modal) modal.style.display = 'none';
+        };
+
+        // Fetch and display products
+        async function loadProducts() {
+            try {
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('error').style.display = 'none';
+
+                const response = await fetch(`${API_BASE_URL}/items`);
+                if (!response.ok) throw new Error('Failed to fetch products');
+
+                allProducts = await response.json();
+                displayProducts(allProducts);
+                document.getElementById('loading').style.display = 'none';
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').textContent = '❌ Error: ' + error.message;
+            }
+        }
+
+        // Display products in grid
+        function displayProducts(products) {
+            const grid = document.getElementById('productsGrid');
+            const noProducts = document.getElementById('noProducts');
+
+            if (products.length === 0) {
+                grid.style.display = 'none';
+                noProducts.style.display = 'block';
+                return;
+            }
+
+            grid.style.display = 'grid';
+            noProducts.style.display = 'none';
+            grid.innerHTML = products.map(product => `
+                <div class="product-card">
+                    <div class="product-image">
+                    ${getProductEmoji(product.name)}
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">${escapeHtml(product.name)}</div>
+                        <div class="product-price">$${product.price.toFixed(2)}</div>
+                        <div class="product-stock">
+                            <span class="stock-label">In Stock:</span>
+                            <span class="stock-count ${getStockClass(product.available)}">${product.available}</span>
+                        </div>
+                        <div class="product-timestamp">Last updated: ${formatTime(product.timestamp)}</div>
+                        <button class="view-btn" onclick="viewProduct(${product.id})" ${product.available === 0 ? 'disabled' : ''}>
+                            ${product.available > 0 ? 'View Details' : 'Out of Stock'}
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // View product details
+        function viewProduct(productId) {
+            const product = allProducts.find(p => p.id === productId);
+            if (product) {
+                document.getElementById('modalProductName').textContent = product.name;
+                document.getElementById('modalProductPrice').textContent = `$${product.price.toFixed(2)}`;
+                document.getElementById('modalProductAvailable').textContent = `${product.available} units`;
+                document.getElementById('modalProductTimestamp').textContent = formatDateTime(product.timestamp);
+                document.getElementById('modalProductId').textContent = `#${product.id}`;
+                modal.style.display = 'block';
+            }
+        }
+
+        // Search functionality
+        document.getElementById('searchBox').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = allProducts.filter(p =>
+                p.name.toLowerCase().includes(query)
+            );
+            displayProducts(filtered);
+        });
+
+        // Helper functions
+        function getProductEmoji(name) {
+            const lower = name.toLowerCase();
+            if (lower.includes('iphone')) return '📱';
+            if (lower.includes('galaxy') || lower.includes('samsung')) return '📱';
+            if (lower.includes('pixel') || lower.includes('google')) return '📱';
+            if (lower.includes('oneplus')) return '📱';
+            if (lower.includes('xiaomi')) return '📱';
+            if (lower.includes('motorola')) return '📱';
+            if (lower.includes('nothing')) return '📱';
+            return '📦';
+        }
+
+        function getStockClass(available) {
+            if (available === 0) return 'out';
+            if (available < 10) return 'low';
+            return '';
+        }
+
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleTimeString();
+        }
+
+        function formatDateTime(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleString();
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Load products on page load
+        loadProducts();
+    </script>
+</body>
+
+</html>

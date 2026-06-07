@@ -126,7 +126,7 @@
             font-size: 1em;
             font-weight: 600;
             transition: all 0.3s ease;
-            width: 100%;
+            width: 90%;
         }
 
         .btn-primary {
@@ -245,7 +245,7 @@
             display: inline-block;
             background: rgba(255, 255, 255, 0.95);
             border: 1px solid #eee;
-            padding: 6px 10px;
+            padding: 3px 5px;
             border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
             margin-top: 8px;
@@ -505,7 +505,7 @@
 
                 allProducts = await response.json();
                 const respEl = document.getElementById('responseTime');
-                respEl.textContent = `Response time: ${duration} ms`;
+                respEl.textContent = `${duration} ms`;
                 respEl.style.display = 'block';
                 displayProducts();
                 document.getElementById('productsLoading').style.display = 'none';

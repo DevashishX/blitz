@@ -1,0 +1,29 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql-db
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: sales
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user_password
+    ports:
+      - 0.0.0.0:3306:3306
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./database/1_populate.sql:/docker-entrypoint-initdb.d/1_populate.sql
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: blitz-app
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    
+
+volumes:
+  db_data:

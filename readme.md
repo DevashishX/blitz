@@ -46,7 +46,7 @@ The architecture is built inside-out to enforce **Command Query Responsibility S
 ## 📂 Repository Structure
 
 ```text
-flash-sale-project/
+blitz/
 ├── ansible/
 │   ├── inventory.ini         # Target host definition (e.g., Hetzner CCX23 Dedicated VPS)
 │   └── deploy.yml            # Automation Playbook (OS hardening, Docker provisioning, app lifecycle)
